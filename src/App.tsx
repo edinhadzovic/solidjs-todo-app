@@ -30,10 +30,14 @@ const App: Component = () => {
       points: 10,
       content: newTodo()
     }
-
     setNewTodo("");
-    addTodo([...todo(), insert])
-    localForge.setItem("todo", todo());
+    addTodo((todos) => [...todos, insert])
+    localForge.setItem("todo", todo()).then(() => {
+      setSubmitting(false);
+    }).catch((error) => {
+      setSubmitting(false);
+      console.error(error)
+    });
   }
 
   return (
@@ -60,7 +64,7 @@ const App: Component = () => {
           <div class='ml-auto mt-8'>
             <button
               disabled={submitting()}
-              class='bg-green-600 hover:bg-green-500 px-8 py-4 text-gray-50 font-bold border-2 border-green-200 transition-all rounded' 
+              class='bg-green-600 hover:bg-green-500 disabled:bg-gray-400 disabled:text-black px-8 py-4 text-gray-50 font-bold border-2 border-green-200 transition-all rounded' 
               type='submit'
             >Add ToDo</button>
           </div>
