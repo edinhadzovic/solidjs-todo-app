@@ -17,6 +17,9 @@ const App: Component = () => {
 
   createEffect(() => {
     localForge.getItem("todo").then((data) => {
+      if (!data) {
+        return;
+      }
       addTodo(data as IToDo[]);
     }).catch((error) => console.error(error));
   })
