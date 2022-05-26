@@ -45,6 +45,26 @@ const App: Component = () => {
 
   return (
     <main class='container mx-auto'>
+      <div class='mb-8 mt-4'>
+        <form class='flex flex-col sm:flex-row items-end space-x-4' onSubmit={handleSubmit}>
+          <div class='flex flex-col w-1/2'>
+            <label class='my-3 font-bold' for="todo">What needs to be done? </label>
+            <input
+              class='bg-[#e0fbfc] shadow p-2 outline-none text-[#293241] font-bold'
+              id="todo"
+              value={newTodo()}
+              onChange={(e) => setNewTodo(e.currentTarget.value)}
+            />
+          </div>
+          <div class=''>
+            <button
+              disabled={submitting()}
+              class='bg-[#ee6c4d] disabled:bg-gray-400 disabled:text-black px-4 py-2 text-gray-50 font-bold transition-all rounded' 
+              type='submit'
+            >Add ToDo</button>
+          </div>
+        </form>
+      </div>
       <div class='space-y-3'>
         <For each={todo()}>
           {(todo, i) => (
@@ -52,27 +72,7 @@ const App: Component = () => {
           )}
         </For>
       </div>
-      <div class='mt-8 border-t-2 border-gray-100'>
-        <form class='flex flex-col' onSubmit={handleSubmit}>
-          <div class='flex flex-col'>
-            <label class='my-3 font-bold' for="todo">What needs to be done? </label>
-            <textarea
-              rows={4}
-              class='bg-gray-50 shadow p-2 outline-none'
-              id="todo"
-              value={newTodo()}
-              onChange={(e) => setNewTodo(e.currentTarget.value)}
-            />
-          </div>
-          <div class='ml-auto mt-8'>
-            <button
-              disabled={submitting()}
-              class='bg-green-600 hover:bg-green-500 disabled:bg-gray-400 disabled:text-black px-8 py-4 text-gray-50 font-bold border-2 border-green-200 transition-all rounded' 
-              type='submit'
-            >Add ToDo</button>
-          </div>
-        </form>
-      </div>
+      
     </main>
   );
 };

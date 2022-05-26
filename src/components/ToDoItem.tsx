@@ -8,7 +8,7 @@ interface IToDoItemsProps {
 
 export const ToDoItem: Component<IToDoItemsProps> = ({done, points, children}) => {
     return (
-        <div class="flex px-4 py-2 bg-gray-100 shadow w-full items-center">
+        <div class="flex px-4 py-2 w-full items-center border-b-[1px] border-[#3d5a80]">
             <div class="flex space-x-4">
                 <div>
                     <input type="checkbox" checked={done} />
