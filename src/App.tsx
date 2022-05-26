@@ -44,10 +44,13 @@ const App: Component = () => {
   }
 
   return (
-    <main class='container mx-auto'>
-      <div class='mb-8 mt-4'>
-        <form class='flex flex-col sm:flex-row items-end space-x-4' onSubmit={handleSubmit}>
-          <div class='flex flex-col w-1/2'>
+    <main class='container px-4 mx-auto'>
+      <div>
+        <h1 class='text-4xl font-bold my-4 text-center'>Your great todo list</h1>
+      </div>
+      <div class='mb-4 sm:mb-8 mt-4 fixed bottom-0 bg-[#293241] w-[92vw] sm:relative sm:w-auto'>
+        <form class='flex flex-col sm:flex-row items-end space-y-4 sm:space-y-0 space-x-4' onSubmit={handleSubmit}>
+          <div class='flex flex-col w-full sm:w-1/2'>
             <label class='my-3 font-bold' for="todo">What needs to be done? </label>
             <input
               class='bg-[#e0fbfc] shadow p-2 outline-none text-[#293241] font-bold'
@@ -56,10 +59,10 @@ const App: Component = () => {
               onChange={(e) => setNewTodo(e.currentTarget.value)}
             />
           </div>
-          <div class=''>
+          <div class='w-full'>
             <button
               disabled={submitting()}
-              class='bg-[#ee6c4d] disabled:bg-gray-400 disabled:text-black px-4 py-2 text-gray-50 font-bold transition-all rounded' 
+              class='w-full sm:w-auto bg-[#ee6c4d] disabled:bg-gray-400 disabled:text-black px-4 py-2 text-gray-50 font-bold transition-all rounded' 
               type='submit'
             >Add ToDo</button>
           </div>
