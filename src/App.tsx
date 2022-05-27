@@ -1,29 +1,12 @@
 import { Component, createEffect, createSignal, For } from 'solid-js';
 import localForge from "localforage";
 import { ToDoItem } from './components/ToDoItem';
-
-interface IToDo {
-  done: boolean,
-  content: string,
-  points: number,
-  createdAt?: Date,
-  completedAt?: Date
-}
+import { IToDo, useAppContext } from './context/AppContext';
 
 const App: Component = () => {
+  const {state, actions} = useAppContext();
   const [submitting, setSubmitting] = createSignal<boolean>(false);
   const [newTodo, setNewTodo] = createSignal<string>("");
-  const [todo, addTodo] = createSignal<IToDo[]>([]);
-
-  createEffect(() => {
-    localForge.getItem("todo").then((data) => {
-      if (!data) {
-        return;
-      }
-      addTodo(data as IToDo[]);
-    }).catch((error) => console.error(error));
-  })
-
 
   const handleSubmit = (event: Event) => {
     setSubmitting(true);
@@ -34,22 +17,21 @@ const App: Component = () => {
       content: newTodo()
     }
     setNewTodo("");
-    addTodo((todos) => [...todos, insert])
-    localForge.setItem("todo", todo()).then(() => {
-      setSubmitting(false);
-    }).catch((error) => {
-      setSubmitting(false);
-      console.error(error)
-    });
+    actions.addTodo(insert)
+    setSubmitting(false);
   }
 
+  
+  const onlyCompleted = (todos: any[]) => todos.filter((t) => t.done);
+  const todoTask = (todos: any[]) => todos.filter((t) => !t.done);
+  
   return (
     <main class='container px-4 mx-auto'>
       <div>
         <h1 class='text-4xl font-bold my-4 text-center'>Your great todo list</h1>
       </div>
       <div class='mb-4 sm:mb-8 mt-4 fixed bottom-0 bg-[#293241] w-[92vw] sm:relative sm:w-auto'>
-        <form class='flex flex-col sm:flex-row items-end space-y-4 sm:space-y-0 space-x-4' onSubmit={handleSubmit}>
+        <form autocomplete='off' class='flex flex-col sm:flex-row items-end space-y-4 sm:space-y-0 space-x-4' onSubmit={handleSubmit}>
           <div class='flex flex-col w-full sm:w-1/2'>
             <label class='my-3 font-bold' for="todo">What needs to be done? </label>
             <input
@@ -68,14 +50,26 @@ const App: Component = () => {
           </div>
         </form>
       </div>
-      <div class='space-y-3'>
-        <For each={todo()}>
-          {(todo, i) => (
-            <ToDoItem done={todo.done} points={todo.points}>{todo.content}</ToDoItem>
-          )}
-        </For>
+      <div>
+        <h3 class='mb-2 text-xl'>Still open</h3>
+        <div class='space-y-3'>
+          <For each={todoTask(state.todos)}>
+            {(todo, i) => (
+              <ToDoItem id={todo.id} done={todo.done} points={todo.points}>{todo.content}</ToDoItem>
+            )}
+          </For>
+        </div>
       </div>
-      
+      <div class='mt-4'>
+        <h3 class='mb-2 text-xl'>Completed</h3>
+        <div class='space-y-3'>
+          <For each={onlyCompleted(state.todos)}>
+            {(todo, i) => (
+              <ToDoItem id={todo.id} done={todo.done} points={todo.points}>{todo.content}</ToDoItem>
+            )}
+          </For>
+        </div>
+      </div>
     </main>
   );
 };
