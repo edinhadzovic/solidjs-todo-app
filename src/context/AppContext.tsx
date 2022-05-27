@@ -40,10 +40,7 @@ export const AppContextProvider = (props) => {
               return;
             }
 
-            const completed = data.filter((t) => t.done);
-            const open = data.filter((t) => !t.done);
             setState('todos', open as any);
-            setState('completed', completed as any);
             setState('ready', true);
           }).catch((error) => console.error(error));
     })
