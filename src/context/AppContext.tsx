@@ -40,7 +40,7 @@ export const AppContextProvider = (props) => {
               return;
             }
 
-            setState('todos', open as any);
+            setState('todos', data as any);
             setState('ready', true);
           }).catch((error) => console.error(error));
     })
