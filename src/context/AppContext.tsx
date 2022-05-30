@@ -1,6 +1,7 @@
 import { createContext, createEffect, onMount, Show, useContext } from "solid-js"
 import { createStore } from "solid-js/store";
 import localForge from "localforage";
+import Storage from "../service/Storage";
 
 const TODO_STORAGE_KEY = "todos";
 const TODO_COUNT_KEY = "index";
@@ -23,6 +24,8 @@ interface IAppContext {
     state: AppContextState
 }
 
+const localdb = new Storage();
+
 const AppContext = createContext();
 
 export const AppContextProvider = (props) => {
@@ -34,31 +37,38 @@ export const AppContextProvider = (props) => {
     })
 
     onMount(() => {
-        localForge.getItem(TODO_STORAGE_KEY).then((data: any[] | null) => {
+        localdb.initial().then((data: any) => {
             if (!data) {
               setState('ready', true);
               return;
             }
 
-            setState('todos', data as any);
+            setState('todoCount', data.count);
+            setState('todos', data.todos as any);
             setState('ready', true);
           }).catch((error) => console.error(error));
     })
 
     const actions = {
         addTodo: (todo: IToDo) => {
-            setState('todoCount', c => c + 1);
+            setState('todoCount', c => {
+                const count = c + 1;
+                localdb.setAppState({
+                    count
+                })
+                return count;
+            });
             setState('todos', (t) => {
                 const createdAt = Date.now();
-                const newTodoList = [...t, {...todo, createdAt: createdAt, id: t.length + 1}]
-                localForge.setItem(TODO_STORAGE_KEY, newTodoList)
+                const newTodoList = [{...todo, createdAt: createdAt, id: t.length + 1}, ...t]
+                localdb.setTodo(newTodoList)
                 return newTodoList;
             })
         },
         removeTodo: (id: number) => {
             setState('todos', (t) => {
                 const newTodoList = t.filter(t => t.id !== id)
-                localForge.setItem(TODO_STORAGE_KEY, newTodoList)
+                localdb.setTodo(newTodoList)
                 return newTodoList;
             })
         },
@@ -66,13 +76,13 @@ export const AppContextProvider = (props) => {
             setState('todos', (t) => {
                 const updatedList = t.map(t => {
                     if (t.id === id) {
-                        t.done = true;
+                        return {...t, done: !t.done}
                     }
 
                     return t;
                 })
 
-                localForge.setItem(TODO_STORAGE_KEY, updatedList)
+                localdb.setTodo(updatedList)
                 return updatedList
             })
         }

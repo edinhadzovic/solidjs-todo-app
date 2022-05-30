@@ -1,7 +1,8 @@
-import { Component, createEffect, createSignal, For } from 'solid-js';
+import { Component, createEffect, createSignal, For, Index } from 'solid-js';
 import localForge from "localforage";
-import { ToDoItem } from './components/ToDoItem';
+import { Todo } from './components/Todo';
 import { IToDo, useAppContext } from './context/AppContext';
+import { DateTime } from 'luxon';
 
 const App: Component = () => {
   const {state, actions} = useAppContext();
@@ -11,11 +12,18 @@ const App: Component = () => {
   const handleSubmit = (event: Event) => {
     setSubmitting(true);
     event.preventDefault();
+
+    if (!newTodo()) {
+      setSubmitting(false);
+      return;
+    }
+
     const insert: IToDo = {
       done: false,
       points: 10,
       content: newTodo()
     }
+
     setNewTodo("");
     actions.addTodo(insert)
     setSubmitting(false);
@@ -23,22 +31,23 @@ const App: Component = () => {
 
   
   const onlyCompleted = (todos: any[]) => todos.filter((t) => t.done);
-  const todoTask = (todos: any[]) => todos.filter((t) => !t.done);
+  const todoTask = (todos: any[]) => todos.sort((a, b) => Number(a.done) - Number(b.done));
   
   return (
     <main class='container px-4 mx-auto'>
-      <div>
-        <h1 class='text-4xl font-bold my-4 text-center'>Your great todo list</h1>
+      <div class=''>
+        <h1 class='text-4xl font-bold my-4'>Todo</h1>
+        <h4 class='text-2xl font-bold'>{DateTime.now().toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}</h4>
       </div>
-      <div class='mb-4 sm:mb-8 mt-4 fixed bottom-0 bg-[#293241] w-[92vw] sm:relative sm:w-auto'>
+      <div class='mb-4 sm:mb-8 mt-4 bg-[#293241] w-[92vw] sm:relative sm:w-auto'>
         <form autocomplete='off' class='flex flex-col sm:flex-row items-end space-y-4 sm:space-y-0 space-x-4' onSubmit={handleSubmit}>
           <div class='flex flex-col w-full sm:w-1/2'>
-            <label class='my-3 font-bold' for="todo">What needs to be done? </label>
+            <label class='my-3 font-bold' for="todo">What needs to be done today? </label>
             <input
-              class='bg-[#e0fbfc] shadow p-2 outline-none text-[#293241] font-bold'
+              class='bg-[#f8f9fa] shadow p-2 outline-none text-[#293241] font-bold rounded'
               id="todo"
               value={newTodo()}
-              onChange={(e) => setNewTodo(e.currentTarget.value)}
+              onChange={(e) => setNewTodo(e.currentTarget.value || "")}
             />
           </div>
           <div class='w-full'>
@@ -51,21 +60,11 @@ const App: Component = () => {
         </form>
       </div>
       <div>
-        <h3 class='mb-2 text-xl'>Still open</h3>
+        <h3 class='mb-2 text-xl'>Todo</h3>
         <div class='space-y-3'>
           <For each={todoTask(state.todos)}>
             {(todo, i) => (
-              <ToDoItem id={todo.id} done={todo.done} points={todo.points}>{todo.content}</ToDoItem>
-            )}
-          </For>
-        </div>
-      </div>
-      <div class='mt-4'>
-        <h3 class='mb-2 text-xl'>Completed</h3>
-        <div class='space-y-3'>
-          <For each={onlyCompleted(state.todos)}>
-            {(todo, i) => (
-              <ToDoItem id={todo.id} done={todo.done} points={todo.points}>{todo.content}</ToDoItem>
+              <Todo id={todo.id} done={todo.done} points={todo.points}>{todo.content}</Todo>
             )}
           </For>
         </div>

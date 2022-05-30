@@ -9,6 +9,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/luxon": "^2.3.2",
     "autoprefixer": "^10.4.7",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.0.24",
@@ -19,6 +20,7 @@
   },
   "dependencies": {
     "localforage": "^1.10.0",
+    "luxon": "^2.4.0",
     "solid-heroicons": "^2.0.3",
     "solid-js": "^1.4.2"
   }

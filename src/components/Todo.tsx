@@ -3,19 +3,19 @@ import { checkCircle, minusCircle, trash } from "solid-heroicons/solid";
 import { Component } from "solid-js";
 import { useAppContext } from "../context/AppContext";
 
-interface IToDoItemsProps {
+interface ITodoProps {
     id: number
     done: boolean
     points: number
     children: any
 }
 
-export const ToDoItem: Component<IToDoItemsProps> = ({done, id, children}) => {
+export const Todo: Component<ITodoProps> = ({done, id, children}) => {
     const {actions} = useAppContext();
     const classState = done ? "bg-[#00f5d4] hover:bg-[#02D0B4]" : "bg-[#252E3C] hover:bg-[#252D3A]"
     
     return (
-        <div class={`rounded flex px-4 py-2 w-full items-center ${classState} hover:cursor-pointer transition-all`}>
+        <div class={`rounded flex px-4 py-4 w-full items-center ${classState} hover:cursor-pointer transition-all`}>
             <div class="flex space-x-4">
                 <div>
                     {/* <input type="checkbox" checked={done} /> */}
