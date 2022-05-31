@@ -34,10 +34,24 @@ const App: Component = () => {
   const todoTask = (todos: any[]) => todos.sort((a, b) => Number(a.done) - Number(b.done));
   
   return (
-    <main class='container px-4 mx-auto'>
+    <main class='container px-4 mx-auto space-y-4'>
       <div class=''>
         <h1 class='text-4xl font-bold my-4'>Todo</h1>
         <h4 class='text-2xl font-bold'>{DateTime.now().toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}</h4>
+      </div>
+      <div class='flex flex-row space-x-4 font-bold'>
+        <div class='p-2 bg-gray-800 rounded'>
+          todos count: <span class='text-gray-300'>120</span>
+        </div>
+        <div class='p-2 bg-gray-800 rounded'>
+          completed: <span class='text-green-400'>75% (90)</span>
+        </div>
+        <div class='p-2 bg-gray-800 rounded'>
+          longest strike: <span class='text-green-400'>12 days</span>
+        </div>
+        <div class='p-2 bg-gray-800 rounded'>
+          most productive day: <span class='text-green-400'>Thuesday</span>
+        </div>
       </div>
       <div class='mb-4 sm:mb-8 mt-4 bg-[#293241] w-[92vw] sm:relative sm:w-auto'>
         <form autocomplete='off' class='flex flex-col sm:flex-row items-end space-y-4 sm:space-y-0 space-x-4' onSubmit={handleSubmit}>
