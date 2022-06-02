@@ -14,17 +14,17 @@ const pwaOptions: Partial<VitePWAOptions> = {
     theme_color: '#ffffff',
     icons: [
       {
-        src: 'icon128x128.png', // <== don't add slash, for testing
+        src: 'icon192x192.png', // <== don't add slash, for testing
         sizes: '192x192',
         type: 'image/png',
       },
       {
-        src: '/icon128x128.png', // <== don't remove slash, for testing
+        src: '/icon512x512.png', // <== don't remove slash, for testing
         sizes: '512x512',
         type: 'image/png',
       },
       {
-        src: 'icon128x128.png', // <== don't add slash, for testing
+        src: 'icon512x512.png', // <== don't add slash, for testing
         sizes: '512x512',
         type: 'image/png',
         purpose: 'any maskable',
