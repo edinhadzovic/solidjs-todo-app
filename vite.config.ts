@@ -1,42 +1,67 @@
-import { defineConfig } from 'vite';
-import solidPlugin from 'vite-plugin-solid';
-import { VitePWA } from 'vite-plugin-pwa'
+
+import { defineConfig } from 'vite'
+import solidPlugin from 'vite-plugin-solid'
+import { ManifestOptions, VitePWA, VitePWAOptions } from 'vite-plugin-pwa'
+import replace from '@rollup/plugin-replace'
+
+const pwaOptions: Partial<VitePWAOptions> = {
+  mode: 'development',
+  base: '/',
+  includeAssets: ['favicon.svg'],
+  manifest: {
+    name: 'PWA Router',
+    short_name: 'PWA Router',
+    theme_color: '#ffffff',
+    icons: [
+      {
+        src: 'icon128x128.png', // <== don't add slash, for testing
+        sizes: '192x192',
+        type: 'image/png',
+      },
+      {
+        src: '/icon128x128.png', // <== don't remove slash, for testing
+        sizes: '512x512',
+        type: 'image/png',
+      },
+      {
+        src: 'icon128x128.png', // <== don't add slash, for testing
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'any maskable',
+      },
+    ],
+  },
+}
+
+const replaceOptions = { __DATE__: new Date().toISOString() }
+const claims = process.env.CLAIMS === 'true'
+const reload = process.env.RELOAD_SW === 'true'
+
+if (process.env.SW === 'true') {
+  pwaOptions.srcDir = 'src'
+  pwaOptions.filename = claims ? 'claims-sw.ts' : 'prompt-sw.ts'
+  pwaOptions.strategies = 'injectManifest'
+  ;(pwaOptions.manifest as Partial<ManifestOptions>).name = 'PWA Inject Manifest'
+  ;(pwaOptions.manifest as Partial<ManifestOptions>).short_name = 'PWA Inject'
+}
+
+if (claims)
+  pwaOptions.registerType = 'autoUpdate'
+
+if (reload) {
+  // @ts-ignore
+  replaceOptions.__RELOAD_SW__ = 'true'
+}
 
 export default defineConfig({
-  plugins: [
-    solidPlugin(), 
-    VitePWA(
-      {
-        includeAssets: ['favicon.svg', 'favicon.ico', 'robots.txt', 'apple-touch-icon.png'],  
-        manifest: {
-          name: 'Name of your app',
-          short_name: 'Short name of your app',
-          description: 'Description of your app',
-          theme_color: '#ffffff',
-          icons: [
-            {
-              src: 'icon128x128.png',
-              sizes: '192x192',
-              type: 'image/png',
-            },
-            {
-              src: 'icon128x128.png',
-              sizes: '512x512',
-              type: 'image/png',
-            },
-            {
-              src: 'icon128x128.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any maskable',
-            }
-          ]
-        }
-      }
-    )
-  ],
   build: {
+    sourcemap: process.env.SOURCE_MAP === 'true',
     target: 'esnext',
     polyfillDynamicImport: false,
   },
-});
+  plugins: [
+    solidPlugin(),
+    VitePWA(pwaOptions),
+    replace(replaceOptions),
+  ],
+})
